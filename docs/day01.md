@@ -25,7 +25,7 @@ split by a blank line. For the test data, it will return a sequence starting wit
       (str/split #"\n\n")))
 ```
 
-For each new string that represents each of the items' calories the elf is bringing, we need to add parse the string
+For each new string that represents each of the items' calories the elf is bringing, we need to parse the string
 and add the results together. This is a perfect case for the `transduce` function, which combines a transformation
 function and a reducing function together. Here, we feed `(str/split-lines s)` in, so we get a sequence of numeric
 strings. The transformation function is `(map parse-long)` to convert each substring into a number, and the reducing
@@ -65,7 +65,7 @@ In part 2, instead of finding the single largest value, we need the top 3 larges
 
 And the solution here is pretty simple. Starting with our mapped sequence of parsed calorie counts, we just have 
 to sort the results in decreasing order using `(sort >)`, grab the first three values with `(take 3)`, and then 
-sum them together using `(take 3)` and `(reduce +)`.
+sum them together using `(reduce +)`.
 
 ```clojure
 ; Preferred solution
