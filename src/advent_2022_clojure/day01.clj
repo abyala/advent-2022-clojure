@@ -1,13 +1,9 @@
 (ns advent-2022-clojure.day01
-  (:require [advent-2022-clojure.utils :as utils]
-            [clojure.string :as str]))
-
-(defn parse-calories [s]
-  (transduce (map parse-long) + (str/split-lines s)))
+  (:require [advent-2022-clojure.utils :as utils]))
 
 (defn solve [n input]
-  (->> (utils/split-blank-line input)
-       (map parse-calories)
+  (->> (utils/split-blank-line-groups parse-long input)
+       (map (partial reduce +))
        (sort >)
        (take n)
        (reduce +)))

@@ -81,6 +81,8 @@ sum them together using `(reduce +)`.
 
 ## Refactoring
 
+### Creating a solve function
+
 It shouldn't be too hard to see how to combine these two functions into a single `solve` function - if we make our
 sequence of sorted, summed calories, we just take the first `n` values (1 for part one, 3 for part two) and add them
 together. So `part1` is simply `(solve 1 input)` and `part2` is `(solve 3 input)`.
@@ -96,3 +98,48 @@ together. So `part1` is simply `(solve 1 input)` and `part2` is `(solve 3 input)
 (defn part1 [input] (solve 1 input))
 (defn part2 [input] (solve 3 input))
 ```
+
+### Deeper parsing utility
+
+It's common in these puzzles to not only split input by blank lines, but also to do something to each line of the
+output. This is in contrast to my original solution of treating each sequence of lines between blanks as a single line.
+Making use of some code I found embedded in
+[borkdude's day 1 solution](https://github.com/borkdude/advent-of-babashka-template/blob/main/src/aoc22/day01.cljc), I
+created a new utility function called `split-blank-line-groups`. Not only does this function read an input string and
+return a sequence of values that are delimited by a blank line, but it also parses each of these strings by their
+internal line break. To make things even better, the caller can pass in an optional transformation function `xf` to be
+applied to each value within each sub-sequence.
+
+The implementation depends on `(partition-by str/blank?)` returning sequences of sequences of strings, and delimiter
+sequences with just a single blank string. So an input file of `1000\n2000\n\n3000\n\n4000\n5000` would turn into 
+`(("1000" "2000") ("") ("3000") ("") ("4000") ("5000"))`. Then `(take-nth 2)` skips every other value, returning the
+sequence of `(("1000" "2000") ("3000") ("4000") ("5000"))`. Finally, mapping each value with an internal mapping
+function of `xf` does the helper work to make this clean.
+
+```clojure
+(defn split-blank-line-groups
+  "Given an input string that represents multiple lines that get grouped together with blank line separators,
+  returns a sequence of the line groups. Each line within a line group can optionally have a transformation
+  function applied to it before being returned."
+  ([input] (split-blank-line-groups identity input))
+  ([xf input] (->> (str/split-lines input)
+                   (partition-by str/blank?)
+                   (take-nth 2)
+                   (map (partial map xf)))))
+```
+
+How do we put this together? Well we don't really need the `parse-calories` function anymore. Instead, we can call
+`split-blank-line-groups` while calling `parse-long` on each line, then call `(map (partial reduce +))` on each
+sequence. These two lines accomplish both the parsing and the transduction work of `parse-calories`. Then the rest is
+the same.
+
+```clojure
+(defn solve [n input]
+  (->> (utils/split-blank-line-groups parse-long input)
+       (map (partial reduce +))
+       (sort >)
+       (take n)
+       (reduce +)))
+```
+
+Is this better or worse?  Tough to say.
