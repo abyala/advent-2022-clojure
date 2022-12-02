@@ -2,7 +2,7 @@
 
 * [Problem statement](https://adventofcode.com/2022/day/2)
 * [Solution code](https://github.com/abyala/advent-2022-clojure/blob/master/src/advent_2022_clojure/day02.clj)
-* [Simplest Solution code](https://github.com/abyala/advent-2022-clojure/blob/master/src/advent_2022_clojure/day02-simplest.clj)
+* [Simplest Solution code](https://github.com/abyala/advent-2022-clojure/blob/master/src/advent_2022_clojure/day02_simplest.clj)
 
 ---
 
