@@ -18,3 +18,8 @@
                    (partition-by str/blank?)
                    (take-nth 2)
                    (map (partial map xf)))))
+
+(defn count-if
+  "Returns the number of items in a collection that return a truthy response to a predicate filter."
+  [pred coll]
+  (count (filter pred coll)))
