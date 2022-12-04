@@ -9,7 +9,7 @@
   (or (<= a c d b) (<= c a b d)))
 
 (defn overlaps? [[a b c d]]
-  (or (<= a c b) (<= c a d)))
+  (and (<= a d) (<= c b)))
 
 (defn solve [pred input]
   (->> (str/split-lines input)

@@ -133,3 +133,36 @@ You know this is coming - let's refactor the two functions to use a common `solv
 (defn part2 [input] (solve overlaps? input))
 ```
 
+---
+
+## Refactoring
+
+So I remembered that this was an interview question, but perhaps it's been too long since the last time I interviewed,
+since I forgot the trick! Thank, as usual, go to Todd Ginsberg and his
+[terrific solution](https://todd.ginsberg.com/post/advent-of-code/2022/day4/). The change is to our `overlaps?`
+function. Recall that this is the solution up above:
+
+```clojure
+(defn overlaps? [[a b c d]]
+  (or (<= a c b) (<= c a d)))
+```
+
+It turns out we don't need to do so many comparisons after all.  Observe some possibilities for how an overlap might
+happen:
+
+    a...b         a...b     a...b               a...b      a...b
+       c...d    c...d           c...d       c...d           c.d
+
+In all of these examples, notice that the start of each segment must not occur after the end of the other one; thus
+`a<=d` and `c<=b`. It's easier to see why this is if we look at only two counter-examples of lines that do not overlap:
+
+    a...b                    a...b
+          c...d        c...d
+
+The first example fails because `c>b`, and the second because `a>d`. So with that information, we can simplify the
+`overlaps?` function as such:
+
+```clojure
+(defn overlaps? [[a b c d]]
+  (and (<= a d) (<= c b)))
+```
