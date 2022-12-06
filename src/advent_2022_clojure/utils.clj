@@ -23,3 +23,8 @@
   "Returns the number of items in a collection that return a truthy response to a predicate filter."
   [pred coll]
   (count (filter pred coll)))
+
+(defn index-of-first
+  "Returns the index of the first value in a collection that returns a truthy response to a predicate filter."
+  [pred coll]
+  (first (keep-indexed #(when (pred %2) %1) coll)))

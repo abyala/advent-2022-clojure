@@ -67,3 +67,51 @@ simple solution.
 (defn part1 [input] (solve 4 input))
 (defn part2 [input] (solve 14 input))
 ```
+
+---
+
+## Refactoring
+
+Discussing solutions with my coworkers, I was impressed by
+(Matt Kuhn's solution)[https://github.com/mtkuhn/advent-of-code-2022/blob/main/src/main/kotlin/mkuhn/aoc/Day06.kt], and
+his use of Kotlin's (indexOfFirst)[https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/index-of-first.html]
+standard library function. Clojurists tend to use lots of little functions instead of necessarily building convenience
+functions like this, but who says I need to live that way?
+
+Let's build a simple `index-of-first` function for generic use.
+
+```clojure
+(defn index-of-first
+  "Returns the index of the first value in a collection that returns a truthy response to a predicate filter."
+  [pred coll]
+  (first (keep-indexed #(when (pred %2) %1) coll)))
+```
+
+Unlike how Java and Kotlin tend to return `-1` when an indexed value isn't available, due to the use of primitives,
+but in Clojure it's much more common to use `nil`. It's reasonable to say that `(solve pred [])` should return `nil`
+instead of `-1`.
+
+With that done, we can make the `solve` function even easier to look at.
+
+```clojure
+(defn solve [n input]
+  (->> (partition-all n 1 input)
+       (index-of-first #(= n (count (set %))))
+       (+ n)))
+```
+
+One quick note - if we were to get invalid data, such as `aaaaaaaaa` for part 1, the code will throw a
+`NullPointerException` because `(+ nil 4)` and `(+ 4 nil)` fails. My original solution would have returned `nil`,
+which is still unexpected, but is a nicer value. Note that in the Java/Kotlin world, if `indexOfFirst` returned -1,
+then adding 4 to it would have returned an answer of 3, which is misleadingly false.
+
+If we want to handle this scenario with `index-of-first`, then the code would still be straightforward with the use of
+`when-let`. I don't program Advent problems overly defensively, so I won't do this in the solution I keep, but it's
+here for completeness.
+
+```clojure
+(defn solve [n input]
+  (when-let [index (index-of-first #(= n (count (set %)))
+                                   (partition-all n 1 input))]
+    (+ index n)))
+```
