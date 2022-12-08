@@ -28,3 +28,8 @@
   "Returns the index of the first value in a collection that returns a truthy response to a predicate filter."
   [pred coll]
   (first (keep-indexed #(when (pred %2) %1) coll)))
+
+(defn char->int
+  "Reads a numeric character and returns its integer value, assuming base 10."
+  [^Character c]
+  (Character/digit c 10))
