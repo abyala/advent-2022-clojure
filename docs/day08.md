@@ -118,3 +118,38 @@ Well would you look at that -- it's another transducer! For each coordinate, we 
 reduce it down to the max value. We do have to provide an initial value, because otherwise Clojure would try to call
 `(max)` without any input, and there is no 0-arity version of the function. This contrasts the initial value `0` for
 `+`, or `1` for `*`; there is no sensible starting value for `max`.
+
+---
+
+## Refactorings
+
+Advent problems often involve playing with points in a grid, so I figured I'd add a few more utility functions to the
+`advent-2022-clojure.point` namespace, mostly around parsing. First, I enhanced the `parse-to-char-coords` function to
+accept an optional argument on what function to map each character on the way in. I could envision doing something
+like `(parse-to-char-coords {\. :space \# :wall} input)` for a maze.
+
+```clojure
+(defn parse-to-char-coords
+  ([input] (parse-to-char-coords identity input))
+  ([f input] (->> (str/split-lines input)
+                  (map-indexed (fn [y line]
+                                 (map-indexed (fn [x c] [[x y] (f c)]) line)))
+                  (apply concat))))
+```
+
+Then I finally implemented a generic `parse-to-char-coords-map` function, also with two arities, but which returns
+a map of coordinates to the (potentially transformed) character at that coordinate. As with today's puzzle, I often
+find maps easier to work with over sequences or multidimensional vectors.
+
+```clojure
+(defn parse-to-char-coords-map
+  ([input] (parse-to-char-coords-map identity input))
+  ([f input] (into {} (parse-to-char-coords f input))))
+```
+
+This means that the `parse-input` function can get simplified into a very clean 1-liner.
+
+```clojure
+(defn parse-input [input]
+  (p/parse-to-char-coords-map char->int input))
+```

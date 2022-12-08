@@ -3,9 +3,7 @@
             [advent-2022-clojure.utils :refer [count-if char->int]]))
 
 (defn parse-input [input]
-  (reduce (fn [acc [k v]] (assoc acc k (char->int v)))
-          {}
-          (p/parse-to-char-coords input)))
+  (p/parse-to-char-coords-map char->int input))
 
 (defn trees-in-direction [points p dir]
   (->> (iterate #(mapv + dir %) p)

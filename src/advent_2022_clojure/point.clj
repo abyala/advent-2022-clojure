@@ -9,16 +9,19 @@
 (def cardinal-directions [left right up down])
 
 (defn parse-to-char-coords
-  "Given an input string, returns a lazy sequence of [[x y] c] tuples of [x y] coords to each character c."
-  [input]
-  (->> (str/split-lines input)
-       (map-indexed (fn [y line]
-                      (map-indexed (fn [x c] [[x y] c]) line)))
-       (apply concat)))
+  "Given an input string of a multi-line grid of single characters, returns a lazy sequence of [[x y] c] tuples of
+  [x y] coords to each character c. If the function f is provided, it transforms each value c using that function."
+  ([input] (parse-to-char-coords identity input))
+  ([f input] (->> (str/split-lines input)
+                  (map-indexed (fn [y line]
+                                 (map-indexed (fn [x c] [[x y] (f c)]) line)))
+                  (apply concat))))
 
 (defn parse-to-char-coords-map
-  [input]
-  (into {} (parse-to-char-coords input)))
+  "Given an input string of a multi-line grid of single characters, returns a map of {[x y] c} mapping the [x y]
+  coordinates to each character c. If the function f is provided, it transforms each value c using that function."
+  ([input] (parse-to-char-coords-map identity input))
+  ([f input] (into {} (parse-to-char-coords f input))))
 
 (defn inclusive-distance [[x1 y1] [x2 y2]]
   (letfn [(local-dist [^long v1 ^long v2] (Math/abs (- v1 v2)))]
