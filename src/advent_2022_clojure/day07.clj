@@ -8,10 +8,10 @@
   (subvec current-dir 0 (max 0 (- (count current-dir) 2))))
 
 (defn move-down [current-dir sub-dir]
-  (apply conj current-dir [:dirs sub-dir]))
+  (conj current-dir :dirs sub-dir))
 
 (defn create-directory [state current-dir dir-name]
-  (assoc-in state (apply conj current-dir [:dirs dir-name]) empty-directory))
+  (assoc-in state (conj current-dir :dirs dir-name) empty-directory))
 
 (defn create-file [state current-dir size]
   (update-in state (conj current-dir :size) + size))

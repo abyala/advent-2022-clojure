@@ -56,7 +56,7 @@ up the file system we need to remove the last 2 values from the vector. For this
   (subvec current-dir 0 (max 0 (- (count current-dir) 2))))
 
 (defn move-down [current-dir sub-dir]
-  (apply conj current-dir [:dirs sub-dir]))
+  (conj current-dir :dirs sub-dir))
 ```
 
 To parse the incoming data, let's start with the top-level function and work our way down.  We'll quickly define an
@@ -99,7 +99,7 @@ our current directory.
 
 ```clojure
 (defn create-directory [state current-dir dir-name]
-  (assoc-in state (apply conj current-dir [:dirs dir-name]) empty-directory))
+  (assoc-in state (conj current-dir :dirs dir-name) empty-directory))
 
 (defn create-file [state current-dir size]
   (update-in state (conj current-dir :size) + size))
