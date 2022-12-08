@@ -5,14 +5,6 @@
 
 ---
 
-## DON'T FORGET THIS PART!!!
-
-; { :files {:name size}
-;   :dirs  { :files :dirs
-
-;; TREE WALK!
-
-
 ## Intro
 
 This was an interesting puzzle today, because there are so many ways to represent the data, and there are a few ways
