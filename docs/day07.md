@@ -99,7 +99,7 @@ our current directory.
 
 ```clojure
 (defn create-directory [state current-dir dir-name]
-  (assoc-in state (conj current-dir :dirs dir-name) empty-directory))
+  (assoc-in state (move-down current-dir dir-name) empty-directory))
 
 (defn create-file [state current-dir size]
   (update-in state (conj current-dir :size) + size))
