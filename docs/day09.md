@@ -168,3 +168,28 @@ redefine `part1`, and create `part2`.
 The only difference between the original `part1` and this `solve` function is that we call `(create-rope knots)`
 instead of using the initial rope.  Then `part1` calls `solve` with a 2-knot rope, while `part2` calls it with a
 10-knot rope. Lovely!
+
+---
+
+## Refactoring
+
+Through the Clojurian Slack, I saw
+[a great solution by nbardiuk](https://github.com/nbardiuk/adventofcode/blob/master/2022/src/day09.clj) that I really
+liked. From his solution, I've reimplemented and simplified the `pull-rope` function.
+
+```clojure
+(defn pull-rope [state]
+  (reduce (fn [acc tail] (let [head (last acc)]
+                           (conj acc (if (p/touching? head tail)
+                                       tail
+                                       (mapv move-ordinate head tail)))))
+          [(first state)]
+          (rest state)))
+```
+
+First off, the function is now single arity again. In my original part2 solution, I was reducing over the indexes for
+each knot within the `state` vector, using `update` to change values by index when needed. Instead, we now are reducing
+over each knot (other than the head), starting from a clean vector containing just the head. As we go through each of
+the items, we `conj` a new knot value to the end of it. If the reducing `tail` is touching the previous knot, we `conj`
+it in place; otherwise, we `conj` the knot after calling `move-ordinate`. This is a much cleaner function than the
+original one, I think!

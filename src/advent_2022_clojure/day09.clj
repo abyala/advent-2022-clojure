@@ -20,15 +20,13 @@
                                    < (dec tail-ord)
                                    > (inc tail-ord)))
 
-(defn pull-rope
-  ([state]
-   (reduce pull-rope state (range 1 (count state))))
-
-  ([state knot-id]
-   (let [[head tail] (map state [(dec knot-id) knot-id])]
-     (if (p/touching? head tail)
-       state
-       (update state knot-id (partial mapv move-ordinate head))))))
+(defn pull-rope [state]
+  (reduce (fn [acc tail] (let [head (last acc)]
+                           (conj acc (if (p/touching? head tail)
+                                       tail
+                                       (mapv move-ordinate head tail)))))
+          [(first state)]
+          (rest state)))
 
 (defn move [state dir]
   (-> state (move-head dir) pull-rope))
