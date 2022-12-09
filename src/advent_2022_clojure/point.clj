@@ -4,8 +4,8 @@
 (def origin [0 0])
 (def left [-1 0])
 (def right [1 0])
-(def up [0 -1])
-(def down [0 1])
+(def up [0 1])
+(def down [0 -1])
 (def cardinal-directions [left right up down])
 
 (defn parse-to-char-coords
@@ -63,3 +63,7 @@
 (defn perimeter-points [[x0 y0] [x1 y1]]
   (concat (for [x [x0 x1], y (range y0 (inc y1))] [x y])
           (for [y [y0 y1], x (range (inc x0) x1)] [x y])))
+
+(defn touching? [[x0 y0] [x1 y1]]
+  (and (<= (abs (- x0 x1)) 1)
+       (<= (abs (- y0 y1)) 1)))
