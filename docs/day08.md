@@ -123,6 +123,8 @@ reduce it down to the max value. We do have to provide an initial value, because
 
 ## Refactorings
 
+### Introducing parse-to-char-coords-map
+
 Advent problems often involve playing with points in a grid, so I figured I'd add a few more utility functions to the
 `advent-2022-clojure.point` namespace, mostly around parsing. First, I enhanced the `parse-to-char-coords` function to
 accept an optional argument on what function to map each character on the way in. I could envision doing something
@@ -152,4 +154,36 @@ This means that the `parse-input` function can get simplified into a very clean 
 ```clojure
 (defn parse-input [input]
   (p/parse-to-char-coords-map char->int input))
+```
+
+### Introducing take-until
+
+I saw several of my coworkers and some Clojurians using some form of a `take-until` function, so I decided to give it
+a shot too. Here's my implementation.
+
+```clojure
+(defn take-until [pred coll]
+  "Returns all values in the input collection for which the predicate is falsey, plus the first one that is truey (if
+  any). Returns nil for a nil or empty input collection."
+  (when (seq coll)
+    (let [[x & xs] coll]
+      (if (pred x) (list x) (lazy-seq (cons x (take-until pred xs)))))))
+```
+
+This implementation returns a lazy sequence of values from an incoming predicate, up to and including the first value
+where the predicate returns a truthy response.
+
+The new `take-until` function really simplifies the `viewing-distance` function by getting rid of that `reduce` call
+with the `reduced` short-circuit. Instead, once we have the sequence of trees, we take values out until we reach the
+end or one of them is at least as high as the source tree. Then at that point, we just need to call `count` for our
+answer.
+
+```clojure
+(defn viewing-distance
+  ([points pos] (transduce (map #(viewing-distance points pos %)) * p/cardinal-directions))
+  ([points pos dir]
+   (let [p (points pos)]
+     (->> (trees-in-direction points pos dir)
+          (take-until (partial <= p))
+          (count)))))
 ```

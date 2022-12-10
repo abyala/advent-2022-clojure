@@ -33,3 +33,10 @@
   "Reads a numeric character and returns its integer value, assuming base 10."
   [^Character c]
   (Character/digit c 10))
+
+(defn take-until [pred coll]
+  "Returns all values in the input collection for which the predicate is falsey, plus the first one that is truey (if
+  any). Returns nil for a nil or empty input collection."
+  (when (seq coll)
+    (let [[x & xs] coll]
+      (if (pred x) (list x) (lazy-seq (cons x (take-until pred xs)))))))

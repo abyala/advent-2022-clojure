@@ -1,6 +1,6 @@
 (ns advent-2022-clojure.day08
   (:require [advent-2022-clojure.point :as p]
-            [advent-2022-clojure.utils :refer [count-if char->int]]))
+            [advent-2022-clojure.utils :refer [count-if char->int take-until]]))
 
 (defn parse-input [input]
   (p/parse-to-char-coords-map char->int input))
@@ -21,9 +21,9 @@
   ([points pos] (transduce (map #(viewing-distance points pos %)) * p/cardinal-directions))
   ([points pos dir]
    (let [p (points pos)]
-     (reduce (fn [acc t] (if (>= t p) (reduced (inc acc)) (inc acc)))
-             0
-             (trees-in-direction points pos dir)))))
+     (->> (trees-in-direction points pos dir)
+          (take-until (partial <= p))
+          (count)))))
 
 (defn part1 [input]
   (let [points (parse-input input)]
