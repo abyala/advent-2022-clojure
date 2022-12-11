@@ -40,3 +40,6 @@
   (when (seq coll)
     (let [[x & xs] coll]
       (if (pred x) (list x) (lazy-seq (cons x (take-until pred xs)))))))
+
+(defn divisible? [num denom]
+  (zero? (rem num denom)))
