@@ -2,6 +2,7 @@
 
 * [Problem statement](https://adventofcode.com/2022/day/7)
 * [Solution code](https://github.com/abyala/advent-2022-clojure/blob/master/src/advent_2022_clojure/day07.clj)
+* [Alternate (eager) solution](https://github.com/abyala/advent-2022-clojure/blob/master/src/advent_2022_clojure/day07_eager.clj)
 
 ---
 
@@ -173,6 +174,8 @@ First we need to know the minimum file size that will free up the necessary spac
 size of the root path, which we can access with `(sizes root-path)`. Then it's just a simple filter and search for the
 minimum value.
 
+---
+
 ## Refactoring
 
 Both parts 1 and 2 start off with similar logic - parse the data, walk through to get the sizes, and eventually throw
@@ -212,3 +215,31 @@ of the reducing function. Sometimes a `reduce` is just what we need.
 Note that we now do two `reduce` calls. Since `input->sizes` hides the directory names, we need to call
 `(reduce max sizes)` to find it again. Meh, no big deal. Then we call `(reduce min ...)` on the filtered sizes to get
 a nice clean answer.
+
+---
+
+## Alternate Implementation
+
+A day or two after finishing my solution, I realized that I didn't like constantly having to make subvectors, and that
+the `walk-dir-sizes` wasn't _terrible_, but also wasn't great. So I created another implementation, placed in the
+[day07-eager namespace](https://github.com/abyala/advent-2022-clojure/blob/master/src/advent_2022_clojure/day07_eager.clj), 
+with another way to solve the problem.
+
+There are a few key changes in this implementation:
+1. Directory paths are represented as lists of directory names, where the last element is always the root `"/"`.
+2. Within each directory is a list of directory paths, so a list of lists, rather than a map by name. Note that the 
+   list is of _complete directory paths_, not just the subdirectory names relative to its parent.
+3. The overall structure of the file system is a single map of `{directory-path {:size n, :dirs ()}}`, where the
+   `size` property is the total deep size of the directory (its files and those of its subdirectories). So again, this
+   file system is not represented as a tree, but rather a directory of every path by name.
+4. The `create-file` function adds the file size to its owning directory, and then also to all parent directories
+   going all the way up to the root.
+5. Since the algorithm eagerly calculates every directory's size, there is no need for a `walk-dir-sizes` function.
+
+At work, this is usually when I would talk to the developers about whether we needed to optimize for reads or writes
+based on how the data would be used. In this scenario, we do a bunch of writes up front (forming the file system), and
+then one big read when we're done, so we should be optimized for writing. However, since I keep on updating directory
+sizes with multiple writes, this algorithm is actually optimized for reading, which is why it is slightly slower than
+my original solution.
+
+Still, it's nice to see multiple solutions to the same problem, so we can play with different strategies.

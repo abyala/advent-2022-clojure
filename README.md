@@ -8,7 +8,8 @@
 | 4     | [source](src/advent_2022_clojure/day04.clj)                                                                            | [blog](docs/day04.md) |
 | 5     | [source](src/advent_2022_clojure/day05.clj)                                                                            | [blog](docs/day05.md) |
 | 6     | [source](src/advent_2022_clojure/day06.clj)                                                                            | [blog](docs/day06.md) |
-| 7     | [source](src/advent_2022_clojure/day07.clj)                                                                            | [blog](docs/day07.md) |
+| 7     | [source](src/advent_2022_clojure/day07.clj)<br/>[eager algorithm](src/advent_2022_clojure/day07_eager.clj)             | [blog](docs/day07.md) |
 | 8     | [source](src/advent_2022_clojure/day08.clj)                                                                            | [blog](docs/day08.md) |
 | 9     | [source](src/advent_2022_clojure/day09.clj)                                                                            | [blog](docs/day09.md) |
 | 10    | [source](src/advent_2022_clojure/day10.clj)                                                                            | [blog](docs/day10.md) |
+ 
