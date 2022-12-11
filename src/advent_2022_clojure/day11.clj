@@ -27,8 +27,8 @@
 (defn create-worry-reducer [reduce-worry? monkeys]
   (if reduce-worry?
     (fn [item] (quot item 3))
-    (let [crt-product (reduce * (map :test-divisor monkeys))]
-      (fn [item] (rem item crt-product)))))
+    (let [total-product (reduce * (map :test-divisor monkeys))]
+      (fn [item] (rem item total-product)))))
 
 (defn process-monkey [worry-reducer monkeys monkey-id]
   (let [{:keys [items worry-raiser test-divisor true-monkey false-monkey]} (monkeys monkey-id)]

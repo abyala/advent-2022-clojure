@@ -10,7 +10,8 @@
 It had such a good start, today's puzzle. Then it became one of _those_ puzzles. Now here's the good news - I was able
 to solve the puzzle without reading anyone else's code. And I _might_ know why I got to a working solution; only
 tomorrow, when I read other folks' solutions, will I know for sure. But in the meantime, I will confidently document
-my thoughts as though I'm right, and I'll adjust later if need be!
+my thoughts as though I'm right, and I'll adjust later if need be! (EDIT: I discovered why my solution worked, and have
+adjusted the explanation below accordingly.)
 
 In this puzzle, we're given some rather long descriptions of monkeys and how worried we are when they mess around with
 our stuff. As we go from part 1 to part 2, apparently our anxiety meds wear off and our worry goes off the chart.
@@ -172,25 +173,52 @@ our answer.
 
 ## Part Two
 
+### Quick Math
 Ok... part two. If we just run the code as described, it'll never complete. I did notice that all of the divisibility
 tests were with prime numbers, which reminded me of another puzzle a few years ago that leveraged the Chinese
-Remainder Theorem. I honestly don't remember how it worked, but I did an experiment -- since we don't reduce our
+Remainder Theorem. I honestly did't remember how it worked, but I did an experiment -- since we don't reduce our
 worry levels by dividing by 3 anymore, I checked to see what would happen if I took the remainder of the item level
-after dividing it by the product of **all** of the test divisors. I think that's the Chinese Remainder Theorem at work?
-Maybe? I don't know, but it got me the right answer, so I'm running wiht it.
+after dividing it by the product of **all** of the test divisors. It worked, but it wasn't because of the Chinese
+Remainder Theorem.
+
+Here's the actual idea. Imagine we had only two monkeys with divisors of 3 and 5, and the current worry is 18,
+remembering we no longer officially reduce our worry anymore. 18 is divisible by 3, so the test should return true.
+Now after the next two iterations, let's say we add 5 and multiply by 10, so we'll go from 18 to 23 to 230. Now our
+three tests (initial test and after passing the item twice) should resolve to `(true false true)`.
+
+If we know that the divisors are 3 and 5, then that means that there are only 15 possible values of interest we need
+to think about before they start repeating. It's exactly like the
+[FizzBuzz puzzle](https://en.wikipedia.org/wiki/Fizz_buzz), in which the test value keeps incrementing by 1. So if we
+mod our ever-increasing value by 15, the product of the divisors, we've essentially recreated FizzBuzz.
+
+Taken another way, let's assume our divisors are again 3 and 5, so we're working with 3, and starting with an item
+level of 28, which is the `(mod 15)` equivalent of 13. Let's play around with either incrementing the values or
+incrementing and then using `(mod 15)`:
+
+* Testing `[28 29 30 31 32 33]` against 3: `[false false true false false true]`
+* Testing `[13 14  0  1  2  3]` against 3: `[false false true false false true]`
+* Testing `[28 29 30 31 32 33]` against 5: `[false false true false false false]`
+* Testing `[13 14  0  1  2  3]` against 5: `[false false true false false false]`
+
+It's easier to prove out multiplication. If the item is divisible by 3, then multiplying the item by any other value
+will keep it divisible by 3. Likewise, if the item is not divisible by 3, then the product will only be divisible by 3
+if the multiplying factor itself is.
+
+So, assuming _that_ makes any sense at all, let's get back to the code.
+
+### Back to the puzzle
 
 The first thing to do is to write a `create-worry-fn` which, like the original `worry-raiser` code in the `parse-monkey`
 function, returns one of two functions. If we naturally reduce our worry, then we'll return a function that takes in
 the item and divides it by 3, as we saw in the no longer needed `reduce-worry` function. If not, then we calculate the
-`crt-product` (that's Chinese Remainder Theorem and not Critical Race Theory), and return a function that takes the
-remainder of the item after dividing by that product.
+`total-product`, and return a function that takes the remainder of the item after dividing by that product.
 
 ```clojure
-(defn create-worry-fn [reduce-worry? monkeys]
+(defn create-worry-reducer [reduce-worry? monkeys]
   (if reduce-worry?
     (fn [item] (quot item 3))
-    (let [crt-product (reduce * (map :test-divisor monkeys))]
-      (fn [item] (rem item crt-product)))))
+    (let [total-product (reduce * (map :test-divisor monkeys))]
+      (fn [item] (rem item total-product)))))
 ```
 
 Now we can refactor `process-monkey` and `process-monkeys` ever so slightly.
@@ -237,7 +265,7 @@ Finally, since we're so close to the end, let's build our `solve` function to po
 
 It's quite similar to the old `part1`, except that now we pre-create the parsed `monkeys` and use them to create the
 `worry-reducer`. The function needs to know which worry reducer to use, as well as how many iterations to apply. The
-`part1` function uses the "normal" worry reducer and 20 iterations, while the `part2` function uses the CRT worry
-reducer and 10000 iterations.
+`part1` function uses the "normal" worry reducer and 20 iterations, while the `part2` function uses the 
+total product worry reducer and 10000 iterations.
 
 And there you have it! A working solution, only slighly annoying on the basis of having to know math secrets.
