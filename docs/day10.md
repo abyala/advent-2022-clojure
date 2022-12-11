@@ -79,14 +79,18 @@ find my first solution to be a bit more imperative, while the second to be clean
 
 But first, there was a convenience definition of `crt-width` to the value 40, and a helper function, `print-character`,
 which I used in both solutions. This function takes in the position of the printer (the `crt-cycle`) and the `signal`,
-and returns the value we want to print. I did decide to print out `x` for a print and a blank space for a miss, rather
-than an `#` and a `.` as the instructions state. I just find it easier to read.
+and returns the value we want to print. I found the combination of `#` and `.` hard to see, so originally I used `x`
+and a blank space, but eventually found the ascii character 219 to print out a `█` block, so I use that plus spaces.
 
 ```clojure
+; advent-2022-clojure.utils namespace
+(def block-char \█)
+
+; advent-2022-clojure.day10 namespace
 (def crt-width 40)
 
 (defn print-character [crt-cycle signal]
-  (if (<= (abs (- crt-cycle signal)) 1) \x \space))
+  (if (<= (abs (- crt-cycle signal)) 1) block-char \space))
 ```
 
 We simply need to see if the `crt-cycle` and the `signal` are at most one value apart for it to be considered a hit.
@@ -109,27 +113,25 @@ in order to its printable character using `map-indexed`, remembering to call `(m
 wrapping around after each 40-character line; this converts the example position 42 to its horizontal position of 2.
 
 Now that we have a sequence of every character to print, we just have to break that sequence into partitions of 
-40 characters, and then print them out to the screen using the `run!` function.  Note that it's arguably easier to
-read without converting each row's character to sequence into a String first, but that's more an artifact of the data
-being used.
+40 characters, and then print them out to the screen using the `run!` function.
 
-As a string:
+Test output:
 
-    xxx  xxx    xx  xx  xxxx  xx   xx  xxx  
-    x  x x  x    x x  x    x x  x x  x x  x
-    xxx  x  x    x x  x   x  x    x  x x  x
-    x  x xxx     x xxxx  x   x xx xxxx xxx  
-    x  x x    x  x x  x x    x  x x  x x    
-    xxx  x     xx  x  x xxxx  xxx x  x x
+    ██  ██  ██  ██  ██  ██  ██  ██  ██  ██  
+    ███   ███   ███   ███   ███   ███   ███
+    ████    ████    ████    ████    ████    
+    █████     █████     █████     █████     
+    ██████      ██████      ██████      ████
+    ███████       ███████       ███████
 
-As a sequence of characters:
+My output:
 
-    (x x x     x x x         x x     x x     x x x x     x x       x x     x x x    )
-    (x     x   x     x         x   x     x         x   x     x   x     x   x     x  )
-    (x x x     x     x         x   x     x       x     x         x     x   x     x  )
-    (x     x   x x x           x   x x x x     x       x   x x   x x x x   x x x    )
-    (x     x   x         x     x   x     x   x         x     x   x     x   x        )
-    (x x x     x           x x     x     x   x x x x     x x x   x     x   x        )
+    ███  ███    ██  ██  ████  ██   ██  ███  
+    █  █ █  █    █ █  █    █ █  █ █  █ █  █
+    ███  █  █    █ █  █   █  █    █  █ █  █
+    █  █ ███     █ ████  █   █ ██ ████ ███  
+    █  █ █    █  █ █  █ █    █  █ █  █ █    
+    ███  █     ██  █  █ ████  ███ █  █ █    
 
 ### Solution 2: Functional solution
 

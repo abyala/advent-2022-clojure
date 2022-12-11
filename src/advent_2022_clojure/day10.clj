@@ -1,5 +1,6 @@
 (ns advent-2022-clojure.day10
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [advent-2022-clojure.utils :refer [block-char]]))
 
 (def crt-width 40)
 
@@ -19,7 +20,7 @@
     (transduce (map (fn [offset] (* offset (signals (dec offset))))) + [20 60 100 140 180 220])))
 
 (defn print-character [crt-cycle signal]
-  (if (<= (abs (- crt-cycle signal)) 1) \x \space))
+  (if (<= (abs (- crt-cycle signal)) 1) block-char \space))
 
 (defn part2 [input]
   (->> (map print-character (signal-strengths input) (cycle (range crt-width)))

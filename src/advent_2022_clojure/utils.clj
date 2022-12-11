@@ -1,6 +1,8 @@
 (ns advent-2022-clojure.utils
   (:require [clojure.string :as str]))
 
+(def block-char \█)
+
 (defn split-by-blank-lines
   "Given an input string, returns a sequence of sub-strings, separated by a completely
   blank string. This function preserves any newlines between blank lines, and it filters
