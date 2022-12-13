@@ -36,12 +36,20 @@
   [^Character c]
   (Character/digit c 10))
 
-(defn take-until [pred coll]
+(defn take-until
   "Returns all values in the input collection for which the predicate is falsey, plus the first one that is truey (if
   any). Returns nil for a nil or empty input collection."
+  [pred coll]
   (when (seq coll)
     (let [[x & xs] coll]
       (if (pred x) (list x) (lazy-seq (cons x (take-until pred xs)))))))
 
 (defn divisible? [num denom]
   (zero? (rem num denom)))
+
+(defn signum
+  "Given a number `n`, returns -1, 0, or 1 based on if the number is negative, zero, or positive."
+  [n]
+  (cond (zero? n) 0
+        (neg? n) -1
+        :else 1))
