@@ -67,3 +67,9 @@
 (defn touching? [[x0 y0] [x1 y1]]
   (and (<= (abs (- x0 x1)) 1)
        (<= (abs (- y0 y1)) 1)))
+
+(defn manhattan-distance
+  "Calculates the Manhattan/taxicab distance between two points."
+  [[x1 y1] [x2 y2]]
+  (+ (abs (- x1 x2))
+     (abs (- y1 y2))))
