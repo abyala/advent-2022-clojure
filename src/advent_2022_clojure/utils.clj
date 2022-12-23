@@ -53,3 +53,9 @@
   (cond (zero? n) 0
         (neg? n) -1
         :else 1))
+
+(defn first-when [pred coll]
+  (first (filter pred coll)))
+
+(defn into-map-by [f coll]
+  (reduce #(assoc %1 (f %2) %2) {} coll))
