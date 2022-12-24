@@ -73,3 +73,9 @@
   [[x1 y1] [x2 y2]]
   (+ (abs (- x1 x2))
      (abs (- y1 y2))))
+
+(defn bounding-box [points]
+  (letfn [(min-max [nums] ((juxt (partial apply min) (partial apply max)) nums))]
+    (let [[x-min x-max] (->> points (map first) min-max)
+          [y-min y-max] (->> points (map second) min-max)]
+      [[x-min y-min] [x-max y-max]])))
