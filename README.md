@@ -21,4 +21,5 @@
 | 21    | [source](src/advent_2022_clojure/day21.clj)                                                                            | [blog](docs/day21.md) |
 | 23    | [source](src/advent_2022_clojure/day23.clj)                                                                            | [blog](docs/day23.md) |
 | 24    | [source](src/advent_2022_clojure/day24.clj)                                                                            | [blog](docs/day24.md) |
+| 25    | [source](src/advent_2022_clojure/day25.clj)                                                                            | [blog](docs/day25.md) |
  
