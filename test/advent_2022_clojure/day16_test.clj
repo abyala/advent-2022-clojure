@@ -11,6 +11,6 @@
                         1647 puzzle-data))
 
 (deftest part2-test
-  (are [expected input] (= expected (part1 input))
+  (are [expected input] (= expected (part2 input))
                         1707 test-data
                         2169 puzzle-data))
