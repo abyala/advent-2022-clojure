@@ -2,13 +2,15 @@
   (:require [clojure.test :refer :all]
             [advent-2022-clojure.day16 :refer :all]))
 
-(def test-data (slurp "resources/day16-puzzle.txt"))
+(def test-data (slurp "resources/day16-test.txt"))
 (def puzzle-data (slurp "resources/day16-puzzle.txt"))
 
 (deftest part1-test
-  (is (= 1651 (part1 test-data)))
-  (is (= 1647 (part1 puzzle-data))))
+  (are [expected input] (= expected (part1 input))
+                        1651 test-data
+                        1647 puzzle-data))
 
-#_(deftest part2-test
-  (is (= 12 (part2 test-data)))
-  (is (= 9975 (part2 puzzle-data))))
+(deftest part2-test
+  (are [expected input] (= expected (part1 input))
+                        1707 test-data
+                        2169 puzzle-data))
