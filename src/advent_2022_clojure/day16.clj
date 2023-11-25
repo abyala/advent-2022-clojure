@@ -72,13 +72,15 @@
       options
       [(give-up-move state)])))
 
-(defn max-pressure-released [max-steps tunnel-map]
-  (loop [options [(initial-state max-steps)] most-pressure 0]
-    (if-let [option (first options)]
+(defn final-states [options tunnel-map]
+   (when (seq options)
+    (let [[option & others] options]
       (if (zero? (:time-remaining option))
-        (recur (rest options) (max most-pressure (:released option)))
-        (recur (into (next-steps tunnel-map option) (rest options)) most-pressure))
-      most-pressure)))
+        (lazy-seq (cons option (final-states others tunnel-map)))
+        (recur (into others (next-steps tunnel-map option)) tunnel-map)))))
+
+(defn max-pressure-released [max-steps tunnel-map]
+  (transduce (map :released) max 0 (final-states (list (initial-state max-steps)) tunnel-map)))
 
 (defn part1 [input]
   (max-pressure-released 30 (prepare-tunnel-map input)))

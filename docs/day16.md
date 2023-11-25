@@ -298,3 +298,24 @@ the base tunnel map, converts it into its tunnel pairs, maps each pair to its co
 maximum value for all possible tunnel pairs.
 
 Wow, this puzzle took a long long time to solve. I'm quite glad that's over!
+
+## Refactor for clarity
+
+I was reading through my code about a year after writing it, and I realized that I didn't like the 
+`max-pressure-released` function, because it did two things at once -- determined the amount of gas released for each
+possible option, and found the total max.  So instead, I split this into a `final-states` function, which returned a
+lazy sequence of all final states possible (where the `:time-remaining` is equal to zero), and then the
+`max-pressure-released` function transduces over the final states, mapping them to their amount of gas released, and
+then picking the max value.
+
+```clojure
+(defn final-states [options tunnel-map]
+   (when (seq options)
+    (let [[option & others] options]
+      (if (zero? (:time-remaining option))
+        (lazy-seq (cons option (final-states others tunnel-map)))
+        (recur (into others (next-steps tunnel-map option)) tunnel-map)))))
+
+(defn max-pressure-released [max-steps tunnel-map]
+  (transduce (map :released) max 0 (final-states (list (initial-state max-steps)) tunnel-map)))
+```
